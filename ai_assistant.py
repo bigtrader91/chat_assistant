@@ -17,21 +17,14 @@ class AIAssistant:
         set_api_key(elevenlabs_api)
 
     def load_conversation(self):
-        try:
-            with open('conversation_with_summary.pkl', 'rb') as input:
-                conversation_with_summary = pickle.load(input)
-        except FileNotFoundError:
-            # Initialize a new conversation if no saved conversation exists.
-            conversation_with_summary = ConversationChain(
-                llm=ChatOpenAI(), 
-                memory=ConversationBufferWindowMemory(k=10), 
-                verbose=True
-            )
-        return conversation_with_summary
 
-    def save_conversation(self):
-        with open('conversation_with_summary.pkl', 'wb') as output:
-            pickle.dump(self.conversation_with_summary, output, pickle.HIGHEST_PROTOCOL)
+        # Initialize a new conversation if no saved conversation exists.
+        conversation_with_summary = ConversationChain(
+            llm=ChatOpenAI(), 
+            memory=ConversationBufferWindowMemory(k=10), 
+            verbose=True
+        )
+        return conversation_with_summary
 
     def generate_speech(self, text: str):
         audio = generate(
@@ -49,8 +42,6 @@ class AIAssistant:
             print(f"Error with GPT-4: {e}")
             gpt_answer = "I'm sorry, I couldn't generate an answer based on the search results."
 
-        # Save the updated conversation.
-        self.save_conversation()
 
         # Generate speech from the text answer.
         self.generate_speech(gpt_answer)
